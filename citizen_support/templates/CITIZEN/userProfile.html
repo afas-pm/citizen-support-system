@@ -1,0 +1,270 @@
+{% extends 'CITIZEN/base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+    .profile-section {
+        padding: 3rem 0;
+        background-color: #f8fafc;
+    }
+
+    .profile-card {
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .profile-header {
+        background: linear-gradient(135deg,rgb(72, 68, 188) 0%,rgb(4, 39, 135) 100%);
+        padding: 3rem 2rem;
+        color: white;
+        position: relative;
+    }
+
+    .profile-avatar {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        border: 4px solid white;
+        object-fit: cover;
+        margin-bottom: 1rem;
+    }
+
+    .profile-name {
+        font-size: 1.875rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .profile-info {
+        padding: 2rem;
+    }
+
+    .info-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .info-label {
+        color: #6b7280;
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+
+    .info-value {
+        color: #111827;
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .edit-button {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        background-color: white;
+        color: #4338CA;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .edit-button:hover {
+        background-color: #f3f4f6;
+        transform: translateY(-1px);
+    }
+
+    /* Modal Styles */
+    .edit-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+    }
+
+    .modal-content {
+        background-color: white;
+        border-radius: 1rem;
+        width: 90%;
+        max-width: 600px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 2rem;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .modal-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #111827;
+    }
+
+    .close-button {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #6b7280;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #374151;
+        font-weight: 500;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+    }
+
+    .save-button {
+        background-color: #4338CA;
+        color: white;
+        border: none;
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        cursor: pointer;
+        width: 100%;
+    }
+
+    .save-button:hover {
+        background-color: #3730A3;
+    }
+</style>
+
+<section class="profile-section">
+    <div class="container">
+        <div class="profile-card">
+            <div class="profile-header">
+                <button class="edit-button" onclick="openEditModal()">
+                    <i class="fa fa-edit"></i> Edit Profile
+                </button>
+                <div class="text-center">
+                    {% if user.image %}
+                        <img src="../static/media/{{ user.image }}" alt="Profile Picture" class="profile-avatar">
+                    {% else %}
+                        <img src="{% static 'images/default-avatar.png' %}" alt="Profile Picture" class="profile-avatar">
+                    {% endif %}
+                    <h1 class="profile-name">{{ user.name }}</h1>
+                    <p class="text-white-50">{{ user.email }}</p>
+                </div>
+            </div>
+
+            <div class="profile-info">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="info-group">
+                            <div class="info-label">Email</div>
+                            <div class="info-value">{{ user.email }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="info-group">
+                            <div class="info-label">Phone</div>
+                            <div class="info-value">{{ user.phone }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="info-group">
+                            <div class="info-label">District</div>
+                            <div class="info-value">{{ user.district }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="info-group">
+                            <div class="info-label">Address</div>
+                            <div class="info-value">{{ user.address }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Edit Profile Modal -->
+<div class="edit-modal" id="editModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">Edit Profile</h2>
+            <button class="close-button" onclick="closeEditModal()">&times;</button>
+        </div>
+        <form   method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label">Profile Picture</label>
+                <input type="file" name="image" class="form-control"  >
+            </div>
+            <div class="form-group">
+                <label class="form-label">Name</label>
+                <input type="text" name="name" class="form-control" value="{{ user.name }}" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" name="email" class="form-control" value="{{ user.email }}" required>
+            </div>
+            <div class="form-group">
+                <label for="district" class="form-label">District</label>
+                <select class="form-control" id="district" name="district" required>
+                    <option disabled selected>{{ user.district }}</option>
+                    {% for district in districts %}
+                        <option value="{{ district }}">{{ district }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Phone</label>
+                <input type="tel" name="phone" class="form-control" value="{{ user.phone }}" required>
+            </div>
+
+            
+            <div class="form-group">
+                <label class="form-label">Change Password</label>
+                <input type="password" name="password" class="form-control" value="{{ user.loginId.view_password }}" required>
+            </div>
+  
+            
+            <div class="form-group">
+                <label class="form-label">Address</label>
+                <input type="text" name="address" class="form-control" value="{{ user.address }}" required>
+            </div>
+            <button type="submit" class="save-button">Save Changes</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openEditModal() { document.getElementById('editModal').style.display = 'block'; }
+    function closeEditModal() { document.getElementById('editModal').style.display = 'none'; }
+</script>
+
+{% endblock %}

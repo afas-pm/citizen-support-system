@@ -1,0 +1,70 @@
+{% extends 'ADMIN/base.html' %}
+{% block content %}
+{% load static %}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Registered Citizens</h2>
+
+    <!-- Search Bar -->
+    <div class="mb-3">
+        <input type="text" id="searchInput" class="form-control" placeholder="Search users...">
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Profile</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                    <th>District</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="userTable">
+                {% for user in users %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        {% if user.image %}
+                        <img src="../static/media/{{ user.image }}" alt="Profile" class="rounded-circle" width="50" height="50">
+                        {% else %}
+                        <img src="{% static 'images/profile.jpg' %}" alt="Profile" class="rounded-circle" width="50" height="50">
+                        {% endif %}
+                    </td>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.phone }}</td>
+                    <td>{{ user.address }}</td>
+                    <td>{{ user.district }}</td>
+                    <td>
+                        <a href="/delete_user?id={{ user.loginId.id }}" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center">No users found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- JavaScript for Search Functionality -->
+<script>
+    document.getElementById("searchInput").addEventListener("keyup", function () {
+        let filter = this.value.toLowerCase();
+        let rows = document.querySelectorAll("#userTable tr");
+
+        rows.forEach(row => {
+            let text = row.innerText.toLowerCase();
+            row.style.display = text.includes(filter) ? "" : "none";
+        });
+    });
+</script>
+
+{% endblock %}

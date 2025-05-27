@@ -1,0 +1,118 @@
+{% extends 'KWA/base.html' %}
+{% block content %}
+{% load static %}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white border-bottom-0">
+                    <h4 class="mb-0 fw-bold">Manage Complaints</h4>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="ps-3">Title</th>
+                                    <th>Description</th>
+                                    <th>Image</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                    <th class="pe-3">Action</th>
+                                </tr>
+                            </thead>
+                            {% for complaint in complaints %}
+                            <tbody>
+                                <tr>
+                                    <td class="ps-3 fw-medium">{{ complaint.title }}</td>
+                                    <td class="text-truncate" style="max-width: 200px;">{{ complaint.description }}</td>
+                                    <td>
+                                        <a href="#" onclick="openImageModal('{{ complaint.complaintImage.url }}', '{{ complaint.title }}')">
+                                            <img src="../static/media/{{ complaint.complaintImage }}" class="img-thumbnail rounded" width="80" height="80" alt="Complaint Image">
+                                        </a>
+                                    </td>
+                                    
+                                    <!-- Image Modal (Single Instance for All) -->
+                                    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="imageModalLabel"></h5>
+                                                    {% comment %} <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="close">X</button> {% endcomment %}
+                                                </div>
+                                                <div class="modal-body text-center">
+                                                    <img id="modalImage" src="../static/media/{{ complaint.complaintImage}}" class="img-fluid" alt="Complaint Image">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- JavaScript for Handling Modal -->
+                                    <script>
+                                        function openImageModal(imageUrl, title) {
+                                            document.getElementById('modalImage').src="../static/media/{{ complaint.complaintImage}}";
+                                            document.getElementById('imageModalLabel').textContent = title;
+                                            var modal = new bootstrap.Modal(document.getElementById('imageModal'));
+                                            modal.show();
+                                        }
+                                    </script>
+                                    {% comment %}  {% endcomment %}
+                                    <td>
+                                        <a href="https://www.google.com/maps?q={{ complaint.latitude }},{{ complaint.longitude }}" target="_blank" class="text-primary">
+                                            <i class="bi bi-geo-alt-fill"></i>📍 View on Map
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <span class="badge {% if complaint.status == 'Resolved' %}bg-success{% else %}bg-warning text-dark{% endif %} rounded-pill px-3 py-2">
+                                            {{ complaint.status }}
+                                        </span>
+                                    </td>
+                                    <td class="pe-3">
+                                        <form method="post" enctype="multipart/form-data" class="update-form">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="complaint_id" value="{{ complaint.id }}">
+                                            <div class="mb-2">
+                                                <select class="form-select form-select-sm" name="status" required>
+                                                    <option value="Pending" {% if complaint.status == 'Pending' %}selected{% endif %}>Pending</option>
+                                                    <option value="InProgress" {% if complaint.status == 'InProgress' %}selected{% endif %}>In Progress</option>
+                                                    <option value="Resolved" {% if complaint.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-2">
+                                                
+                                                <input type="file" class="form-control form-control-sm" name="solvedImage" accept="image/*" required>
+                                            </div>
+                                            <button type="submit" class="btn btn-sm btn-primary">
+                                                <i class="bi bi-check2-circle me-1"></i>Update
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Bootstrap Icons CSS -->
+
+<!-- Add some custom styling -->
+<style>
+    .update-form {
+        max-width: 200px;
+    }
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem 0;
+    }
+</style>
+
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends 'Citizen/base.html' %}
+{% block content %}
+{% load static %}
+
+<!-- COMPLAINT REPORTING SECTION -->
+<div class="section bgi-cover-center py-5">
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-lg p-4">
+                    <h2 class="text-center mb-4">Report a Complaint</h2>
+                    <form method="post" id="complaintForm" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="title" name="title" placeholder="Enter Complaint Title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" placeholder="Describe your complaint" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="complaintImage" class="form-label">Upload Image</label>
+                            <input type="file" class="form-control" id="complaintImage" name="complaintImage" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="district" class="form-label">District</label>
+                            <select class="form-control" id="district" name="district" required>
+                                <option value="" selected disabled>Select District</option>
+                                {% for district in districts %}
+                                    <option value="{{ district }}">{{ district }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="authority" class="form-label">Authority Type</label>
+                            <select class="form-control" id="authority" name="authority" required>
+                                <option value="" selected disabled>Select Authority</option>
+                                <option value="KSEB">KSEB</option>
+                                <option value="KWA">KWA</option>
+                                <option value="PWD">PWD</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Select Location</label>
+                            <input type="text" class="form-control" id="latitude" name="latitude" placeholder="Latitude" readonly>
+                            <input type="text" class="form-control mt-2" id="longitude" name="longitude" placeholder="Longitude" readonly>
+                            <div id="map" style="height: 300px; margin-top: 10px;"></div>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Submit Complaint</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include Leaflet.js -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var map = L.map('map').setView([10.8505, 76.2711], 8);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    
+    var marker = L.marker([10.8505, 76.2711], { draggable: true }).addTo(map);
+    
+    marker.on('dragend', function(event) {
+        var position = marker.getLatLng();
+        document.getElementById('latitude').value = position.lat;
+        document.getElementById('longitude').value = position.lng;
+    });
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,162 @@
+{% extends 'CITIZEN/base.html' %}
+{% block content %}
+{% load static %}
+
+<div class="container-fluid mt-5">
+    <h2 class="text-center mb-4">All Complaints and Their Status</h2>
+
+    <!-- Filters -->
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search complaints...">
+        </div>
+        <div class="col-md-3">
+            <select id="statusFilter" class="form-control">
+                <option value="">Filter by Status</option>
+                <option value="Pending">Pending</option>
+                <option value="Resolved">Resolved</option>
+                <option value="In Progress">In Progress</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select id="authorityFilter" class="form-control">
+                <option value="">Filter by Authority</option>
+                {% for authority in authorities %}
+                <option value="{{ authority.authority }}">{{ authority.authority }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select id="districtFilter" class="form-control">
+                <option value="">Filter by District</option>
+                {% for district in districts %}
+                <option value="{{ district }}">{{ district }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Citizen</th>
+                    <th>Authority</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Complaint Image</th>
+                    <th>Resolved Image</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>District</th>
+                    <th>Location</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="complaintTable">
+                {% for complaint in complaints %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ complaint.citizenId.name }}<br>{{ complaint.citizenId.email }}</td>
+                    <td>{{ complaint.authorityId.authority }}<br>{{ complaint.authorityId.email }}</td>
+                    <td>{{ complaint.title }}</td>
+                    <td>{{ complaint.description }}</td>
+                    <td>
+                        {% if complaint.complaintImage %}
+                        <img src="../static/media/{{ complaint.complaintImage }}" alt="Complaint Image" width="50" height="50">
+                        {% else %} N/A {% endif %}
+                    </td>
+                    <td>
+                        {% if complaint.solvedImage %}
+                        <img src="../static/media/{{ complaint.solvedImage }}" alt="Solved Image" width="50" height="50">
+                        {% else %} N/A {% endif %}
+                    </td>
+                    <td class="status">{{ complaint.status }}</td>
+                    <td>{{ complaint.date }}</td>
+                    <td>
+                        {{ complaint.authorityId.district }}
+                </td>
+                    <td>
+                        <a href="https://www.google.com/maps?q={{ complaint.latitude }},{{ complaint.longitude }}" target="_blank">View</a>
+                    </td>
+                    <td>
+                        <a href="/view_complaintToPrint?id={{ complaint.id }}" class="btn btn-primary">View</a>
+                    </td> 
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="11" class="text-center">No complaints found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- JavaScript for Search and Filter Functionality -->
+<script>
+    document.getElementById("searchInput").addEventListener("keyup", filterTable);
+    document.getElementById("statusFilter").addEventListener("change", filterTable);
+    document.getElementById("authorityFilter").addEventListener("change", filterTable);
+    document.getElementById("districtFilter").addEventListener("change", filterTable);
+
+    // Store original HTML content for all rows once
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelectorAll("#complaintTable tr").forEach(row => {
+            row.querySelectorAll("td").forEach(td => {
+                td.setAttribute("data-original", td.innerHTML);
+            });
+        });
+    });
+
+    function filterTable() {
+        let searchFilter = document.getElementById("searchInput").value.toLowerCase();
+        let statusFilter = document.getElementById("statusFilter").value.toLowerCase();
+        let authorityFilter = document.getElementById("authorityFilter").value.toLowerCase();
+        let districtFilter = document.getElementById("districtFilter").value.toLowerCase();
+
+        let rows = document.querySelectorAll("#complaintTable tr");
+
+        rows.forEach(row => {
+            // Restore original HTML before reprocessing
+            row.querySelectorAll("td").forEach(td => {
+                td.innerHTML = td.getAttribute("data-original");
+            });
+
+            let text = row.innerText.toLowerCase();
+            let status = row.querySelector(".status") ? row.querySelector(".status").innerText.toLowerCase() : "";
+            let authority = row.cells[2] ? row.cells[2].innerText.toLowerCase() : "";
+            let district = row.cells[9] ? row.cells[9].innerText.toLowerCase() : "";
+
+            let matchesSearch = text.includes(searchFilter);
+            let matchesStatus = statusFilter === "" || status.includes(statusFilter);
+            let matchesAuthority = authorityFilter === "" || authority.includes(authorityFilter);
+            let matchesDistrict = districtFilter === "" || district.includes(districtFilter);
+
+            if (matchesSearch && matchesStatus && matchesAuthority && matchesDistrict) {
+                row.style.display = "";
+
+                if (searchFilter) {
+                    highlightText(row, searchFilter);
+                }
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
+
+    function highlightText(row, searchFilter) {
+        row.querySelectorAll("td").forEach(td => {
+            // Skip image or link-containing cells
+            if (td.querySelector("a") || td.querySelector("img")) return;
+
+            let originalText = td.innerText;
+            let regex = new RegExp(`(${searchFilter})`, "gi");
+            td.innerHTML = originalText.replace(regex, `<span style="background-color: #ffcc00; color:black; font-weight:700;">$1</span>`);
+        });
+    }
+</script>
+
+
+{% endblock %}

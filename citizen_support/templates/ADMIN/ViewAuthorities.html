@@ -1,0 +1,92 @@
+{% extends 'ADMIN/base.html' %}
+{% block content %}
+{% load static %}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Registered Authorities</h2>
+
+    <!-- Search Bar and Filter -->
+    <div class="mb-3">
+        <input type="text" id="searchInput" class="form-control" placeholder="Search authorities...">
+    </div>
+    <div class="mb-3">
+        <select id="authorityFilter" class="form-control">
+            <option value="">All Authorities</option>
+            {% for authority in authorities %}
+            <option value="{{ authority.authority }}">{{ authority.authority }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Profile</th>
+                    <th>Authority</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                    <th>District</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="authorityTable">
+                {% for authority in authorities %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        {% if authority.image %}
+                        <img src="../static/media/{{ authority.image }}" alt="Profile" class="rounded-circle" width="50" height="50">
+                        {% else %}
+                        <img src="{% static 'images/profile.jpg' %}" alt="Profile" class="rounded-circle" width="50" height="50">
+                        {% endif %}
+                    </td>
+                    <td class="authority-name">{{ authority.authority }}</td>
+                    <td>{{ authority.email }}</td>
+                    <td>{{ authority.phone }}</td>
+                    <td>{{ authority.address }}</td>
+                    <td>{{ authority.district }}</td>
+                    <td>
+                        <a href="/delete_authority?id={{ authority.loginId.id }}" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center">No authorities found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- JavaScript for Search and Filter Functionality -->
+<script>
+    document.getElementById("searchInput").addEventListener("keyup", function () {
+        filterTable();
+    });
+
+    document.getElementById("authorityFilter").addEventListener("change", function () {
+        filterTable();
+    });
+
+    function filterTable() {
+        let searchFilter = document.getElementById("searchInput").value.toLowerCase();
+        let authorityFilter = document.getElementById("authorityFilter").value.toLowerCase();
+        let rows = document.querySelectorAll("#authorityTable tr");
+
+        rows.forEach(row => {
+            let text = row.innerText.toLowerCase();
+            let authority = row.querySelector(".authority-name").innerText.toLowerCase();
+            
+            let matchesSearch = text.includes(searchFilter);
+            let matchesAuthority = authorityFilter === "" || authority === authorityFilter;
+            
+            row.style.display = matchesSearch && matchesAuthority ? "" : "none";
+        });
+    }
+</script>
+
+{% endblock %}

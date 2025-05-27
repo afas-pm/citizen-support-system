@@ -1,0 +1,117 @@
+{% for message in messages %}
+<script>
+  alert("{{message}}");
+</script>
+{% endfor %} {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<!-- Mirrored from html.rometheme.pro/lawe/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 17 Mar 2025 04:02:15 GMT -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<head>
+  <!-- Basic Page Needs
+    ================================================== -->
+  <meta charset="utf-8" />
+  <!--[if IE]><meta http-equiv="x-ua-compatible" content="IE=9" /><![endif]-->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LAWE - Lawyer and Attorney Html Template</title>
+  <meta name="description"
+    content="Lawe is responsive multi-purpose HTML5 template compatible with Bootstrap 4. Take your Startup business website to the next level. It is designed for lawyer, Attorney, businesses or any type of person or business who wants to showcase their work, services and professional way." />
+  <meta name="keywords"
+    content="advocate, attorney, business, consult, consultant, consulting, corporate, government, justice, law, lawyer, lawyers, legal, political" />
+  <meta name="author" content="rometheme.net" />
+
+    <!-- ==============================================
+  Favicons
+  =============================================== -->
+  <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" />
+  <link rel="apple-touch-icon" href="{% static 'images/apple-touch-icon.png' %}" />
+  <link rel="apple-touch-icon" sizes="72x72" href="{% static 'images/apple-touch-icon-72x72.png' %}" />
+  <link rel="apple-touch-icon" sizes="114x114" href="{% static 'images/apple-touch-icon-114x114.png' %}" />
+
+    <!-- ==============================================
+  CSS VENDOR
+  =============================================== -->
+  <link rel="stylesheet" type="text/css" href="{% static 'css/vendor/bootstrap.min.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/vendor/font-awesome.min.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/vendor/owl.carousel.min.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/vendor/owl.theme.default.min.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/vendor/magnific-popup.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/vendor/animate.min.css' %}" />
+
+    <!-- ==============================================
+  Custom Stylesheet
+  =============================================== -->
+  <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
+
+  <script src="{% static 'js/vendor/modernizr.min.js' %}"></script>
+</head>
+
+<body>
+  <!-- BACK TO TOP SECTION -->
+  <a href="#0" class="cd-top cd-is-visible cd-fade-out">Top</a>
+
+  <!-- HEADER -->
+  <div class="header header-1">
+    <!-- NAVBAR SECTION -->
+    <div class="navbar-main">
+      <div class="container-fluid">
+        <nav id="navbar-example" class="navbar navbar-expand-lg">
+          <a class="navbar-brand" href="/">
+            <h4>Citizen Support</h4>
+          </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="/kseb_dashboard">HOME</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/ksebProfile">PROFILE</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/ksebViewComplaints" >COMPLAINTS</a>
+              </li>
+
+              {% comment %}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
+                  aria-expanded="false">
+                  PAGES
+                </a>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" href="page-gallery.html">GALLERY</a>
+                  <a class="dropdown-item" href="page-testimonials.html">TESTIMONIALS</a>
+                </div>
+              </li>
+              {% endcomment %}
+
+              <li class="nav-item">
+                <a class="nav-link" href="/">LOGOUT</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </div>
+  {% block content %} {% endblock %}
+
+  <!-- JS VENDOR -->
+
+  <script src="{% static 'js/vendor/jquery.min.js' %}"></script>
+  <script src="{% static 'js/vendor/bootstrap.min.js' %}"></script>
+  <script src="{% static 'js/vendor/owl.carousel.js' %}"></script>
+  <script src="{% static 'js/vendor/jquery.magnific-popup.min.js' %}"></script>
+
+  <!-- SENDMAIL -->
+  <script src="{% static 'js/vendor/validator.min.js' %}"></script>
+  <script src="{% static 'js/vendor/form-scripts.js' %}"></script>
+
+  <script src="{% static 'js/script.js' %}"></script>
+</body>
+
+</html>

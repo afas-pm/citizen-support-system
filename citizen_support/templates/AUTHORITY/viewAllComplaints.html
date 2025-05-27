@@ -1,0 +1,142 @@
+{% extends 'AUTHORITY/base.html' %}
+{% block content %}
+{% load static %}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white border-bottom-0">
+                    <h3 class="mb-0 fw-bold">Complaint History</h3>
+                    <a href="/kwaViewAllComplaint" class="mb-0 btn btn-primary fw-bold float-right">View complaint history</a>
+
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 text-center">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="ps-3">Title</th>
+                                    <th>Description</th>
+                                    <th class="ps-3">Complainant</th>
+                                    <th>Image</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                    {% comment %} <th class="pe-3">Action</th> {% endcomment %}
+                                </tr>
+                            </thead>
+                            {% for complaint in complaints %}
+                            <tbody>
+                                <tr>
+                                    <td class="ps-3 fw-medium">{{ complaint.title }}</td>
+                                    <td class="text-truncate" style="max-width: 200px;">{{ complaint.description }}</td>
+                                    <td class="text-truncate" style="max-width: 200px;">{{ complaint.citizenId.name }}
+                                    </td>
+                                    <td>
+                                        <a href="#"
+                                            onclick="openImageModal('../static/media/{{ complaint.complaintImage }}', '{{ complaint.title }}')">
+                                            <img src="../static/media/{{ complaint.complaintImage }}"
+                                                class="img-thumbnail rounded" width="80" height="80"
+                                                alt="Complaint Image">
+                                        </a>
+                                    </td>
+
+                                    <!-- Image Modal (Single Instance for All Complaints) -->
+                                    <div class="modal fade" id="imageModal" tabindex="-1"
+                                        aria-labelledby="imageModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="imageModalLabel"></h5>
+                                                    {% comment %} <button type="button" class="btn-close"
+                                                        data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    {% endcomment %}
+                                                </div>
+                                                <div class="modal-body text-center">
+                                                    <img id="modalImage" src="" class="img-fluid" alt="Complaint Image">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- JavaScript for Handling Modal -->
+                                    <script>
+                                        function openImageModal(imageUrl, title) {
+                                            document.getElementById('modalImage').src = imageUrl;
+                                            document.getElementById('imageModalLabel').textContent = title;
+                                            var modal = new bootstrap.Modal(document.getElementById('imageModal'));
+                                            modal.show();
+                                        }
+                                    </script>
+                                    {% comment %} {% endcomment %}
+                                    <td>
+                                        <a href="https://www.google.com/maps?q={{ complaint.latitude }},{{ complaint.longitude }}"
+                                            target="_blank" class="text-primary">
+                                            <i class="bi bi-geo-alt-fill"></i>📍 View on Map
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <span
+                                            class="badge {% if complaint.status == 'Resolved' %}bg-success{% else %}bg-warning text-dark{% endif %} rounded-pill px-3 py-2">
+                                            {{ complaint.status }}
+                                        </span>
+                                    </td>
+                                    {% comment %} <td class="pe-3">
+                                        <form method="post" enctype="multipart/form-data" class="update-form">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="complaint_id" value="{{ complaint.id }}">
+                                            <div class="mb-2">
+                                                <select class="form-select form-select-sm" name="status" required>
+                                                    <option value="Pending"
+                                                        {% if complaint.status == 'Pending' %}
+                                                        selected
+                                                        {% endif %}>
+                                                        Pending</option>
+                                                    <option value="InProgress"
+                                                        {% if complaint.status == 'InProgress' %}selected{% endif %}>In
+                                                        Progress</option>
+                                                    <option value="Resolved"
+                                                        {% if complaint.status == 'Resolved' %}selected{% endif %}>
+                                                        Resolved</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-2">
+
+                                                <input type="file" class="form-control form-control-sm"
+                                                    name="solvedImage" accept="image/*">
+                                            </div>
+                                            <button type="submit" class="btn btn-sm btn-primary">
+                                                <i class="bi bi-check2-circle me-1"></i>Update
+                                            </button>
+                                        </form>
+                                    </td> {% endcomment %}
+                                </tr>
+                            
+                            </tbody>
+
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Bootstrap Icons CSS -->
+
+<!-- Add some custom styling -->
+<style>
+    .update-form {
+        max-width: 200px;
+    }
+
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem 0;
+    }
+</style>
+
+{% endblock %}

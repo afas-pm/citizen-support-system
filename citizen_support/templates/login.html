@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<!-- LOGIN SECTION -->
+<div class="section bgi-cover-center py-5">
+    <div class="container-fluid d-flex justify-content-center">
+        <div class="card shadow-lg p-4" style="max-width: 400px; width: 100%;">
+            <h2 class="text-center mb-4">Login</h2>
+            <form method="post" id="loginForm">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="p_name" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="p_name" name="username" placeholder="Enter Username"
+                        required>
+                </div>
+                <div class="mb-3">
+                    <label for="p_email" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="p_email" name="password" placeholder="Enter Password"
+                        required>
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
