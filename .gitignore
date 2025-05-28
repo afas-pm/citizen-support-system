@@ -20,3 +20,4 @@ staticfiles/
 
 # System
 *.DS_Store
+__pycache__/
